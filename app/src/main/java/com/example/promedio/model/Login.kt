@@ -8,4 +8,6 @@ class Login {
     var nombre by mutableStateOf("")
     var correo by mutableStateOf("")
     var carrera by mutableStateOf("")
+
+    var terminos by mutableStateOf(false)
 }
