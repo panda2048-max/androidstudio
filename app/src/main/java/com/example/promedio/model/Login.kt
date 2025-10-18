@@ -1,13 +1,12 @@
 package com.example.promedio.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class Login {
-    var nombre by mutableStateOf("")
-    var correo by mutableStateOf("")
-    var carrera by mutableStateOf("")
 
-    var terminos by mutableStateOf(false)
-}
+@Entity(tableName = "logins")
+data class Login(
+    @PrimaryKey(autoGenerate = true) val id : Int = 0,
+    var nombre : String,
+    var correo : String
+)

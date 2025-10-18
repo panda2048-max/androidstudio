@@ -1,60 +1,47 @@
 package com.example.promedio.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.promedio.model.Login
-import com.example.promedio.model.MensajeError
 import com.example.promedio.repository.LoginRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
-class LoginViewModel {
+class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
 
-    private val repository = LoginRepository()
+    val nombre = MutableStateFlow("")
+    val correo = MutableStateFlow("")
 
-    var login: Login by mutableStateOf( repository.getLogin())
-    var mensajeError: MensajeError by mutableStateOf(repository.getMensajeError())
+    val logins = MutableStateFlow<List<Login>>(emptyList())
 
-    fun  verificarLogin(): Boolean{
-        return verificarNombre() &&
-                verificarCorreo() &&
-                verificarTerminos()
-
+    init {
+        cargarUsuarios()
     }
 
-    fun verificarNombre(): Boolean{
-        if (!repository.validacionNombre()){
-            mensajeError.nombre = "el nombre esta vacio"
-            return false
-        }else{
-            mensajeError.nombre = ""
-            return true
+    private fun cargarUsuarios() {
+        viewModelScope.launch {
+            logins.value = repository.getAll()
         }
-        return repository.validacionNombre()
     }
 
-    fun verificarCorreo(): Boolean{
-        if (!repository.validacionCorreo()){
-            mensajeError.correo = "el correo esta vacio"
-            return false
-        }else{
-            mensajeError.correo = ""
-            return true
+    fun agregarUsuario(login: Login) {
+        viewModelScope.launch {
+            repository.insert(login)
+            cargarUsuarios()
         }
-        return repository.validacionCorreo()
     }
 
-    fun verificarTerminos(): Boolean{
-        if (!repository.validacionTerminos()){
-            mensajeError.terminos = "Debes aceptar los terminos"
-            return false
-        }else{
-            mensajeError.terminos = ""
-            return true
+    fun actualizarUsuario(login: Login) {
+        viewModelScope.launch {
+            repository.update(login)
+            cargarUsuarios()
         }
-        return repository.validacionTerminos()
     }
 
-
-
-
+    fun eliminarUsuario(login: Login) {
+        viewModelScope.launch {
+            repository.delete(login)
+            cargarUsuarios()
+        }
+    }
 }

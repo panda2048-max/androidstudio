@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -40,6 +41,18 @@ android {
 }
 
 dependencies {
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+
+    implementation("androidx.room:room-runtime:2.7.0-alpha03")
+    implementation("androidx.room:room-ktx:2.7.0-alpha03")
+    kapt("androidx.room:room-compiler:2.7.0-alpha03")
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
