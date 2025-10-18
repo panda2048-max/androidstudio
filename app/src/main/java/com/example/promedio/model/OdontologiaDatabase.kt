@@ -5,28 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(
-    entities = [Login::class, modelIngenieria::class, modelOdontologia::class],
-    version = 1,
-    exportSchema = false
-)
-abstract class AppDatabase : RoomDatabase() {
+@Database(entities = [modelOdontologia::class], version = 1, exportSchema = false)
+abstract class OdontologiaDatabase : RoomDatabase() {
 
-    // DAOs disponibles en la app
-    abstract fun loginDao(): LoginDao
-    abstract fun ingenieriaDao(): IngenieriaDao
     abstract fun odontologiaDao(): OdontologiaDao
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: OdontologiaDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase {
+        fun getDatabase(context: Context): OdontologiaDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java,
-                    "promedio_db"
+                    OdontologiaDatabase::class.java,
+                    "odontologia_db"
                 ).build()
                 INSTANCE = instance
                 instance
@@ -34,4 +27,3 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 }
-

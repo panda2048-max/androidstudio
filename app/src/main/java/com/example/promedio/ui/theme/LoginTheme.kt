@@ -1,81 +1,98 @@
 package com.example.promedio.ui.theme
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.promedio.model.Login
-import com.example.promedio.viewmodel.LoginViewModel
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun Logins(viewModel: LoginViewModel) {
-    val logins by viewModel.logins.collectAsState()
-    val nombre by viewModel.nombre.collectAsState()
-    val correo by viewModel.correo.collectAsState()
+fun LoginScreen(
+    onNavigateIngenieria: () -> Unit,
+    onNavigateOdontologia: () -> Unit
+) {
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+    var email by remember { mutableStateOf(TextFieldValue("")) }
+    var selectedCareer by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "Inicio de Sesión",
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 24.dp),
+            textAlign = TextAlign.Center
         )
 
+        // Campo de nombre
         OutlinedTextField(
-            value = nombre,
-            onValueChange = { viewModel.nombre.value = it },
-            label = { Text("Nombre") }
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nombre") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
+        // Campo de correo
         OutlinedTextField(
-            value = correo,
-            onValueChange = { viewModel.correo.value = it },
-            label = { Text("Correo") }
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Correo electrónico") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = {
-            if (nombre.isNotBlank() && correo.isNotBlank()) {
-                viewModel.agregarUsuario(Login(nombre = nombre, correo = correo))
-                viewModel.nombre.value = ""
-                viewModel.correo.value = ""
-            }
-        }) {
-            Text("Agregar Usuario")
+        // Carrera: Ingeniería
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Checkbox(
+                checked = selectedCareer == "ingenieria",
+                onCheckedChange = { selectedCareer = "ingenieria" }
+            )
+            Text("Ingeniería en Informática")
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        // Carrera: Odontología
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 24.dp)
         ) {
-            items(logins) { usuario ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = usuario.nombre, modifier = Modifier.weight(1f))
-                        Text(text = usuario.correo, modifier = Modifier.weight(1f))
-                    }
-                    Divider()
+            Checkbox(
+                checked = selectedCareer == "odontologia",
+                onCheckedChange = { selectedCareer = "odontologia" }
+            )
+            Text("Técnico en Odontología")
+        }
+
+        // Botón Continuar
+        Button(
+            onClick = {
+                when (selectedCareer) {
+                    "ingenieria" -> onNavigateIngenieria()
+                    "odontologia" -> onNavigateOdontologia()
                 }
-            }
+            },
+            enabled = name.text.isNotBlank() &&
+                    email.text.isNotBlank() &&
+                    selectedCareer.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth(0.6f)
+        ) {
+            Text("Continuar")
         }
     }
 }
