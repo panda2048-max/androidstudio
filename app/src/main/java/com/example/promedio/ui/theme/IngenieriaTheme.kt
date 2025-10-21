@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.promedio.viewmodel.IngenieriaViewModel
 import com.example.promedio.model.modelIngenieria
 
-
+// creacion de la parte visula de Odontologia
 @Composable
 fun IngenieriaTheme(viewModel: IngenieriaViewModel, onBackToLogin: () -> Unit) {
     val nota_1 by viewModel.nota_1.collectAsState()
@@ -19,6 +19,7 @@ fun IngenieriaTheme(viewModel: IngenieriaViewModel, onBackToLogin: () -> Unit) {
     val nota_3 by viewModel.nota_3.collectAsState()
     var notaFinal by remember { mutableStateOf<Double?>(null) }
 
+    // Column para que se cree esta apartado de manera de columnas hacia abajo
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -26,14 +27,17 @@ fun IngenieriaTheme(viewModel: IngenieriaViewModel, onBackToLogin: () -> Unit) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // testo del inicio
         Text(
             text = "Ingeniería en Informática",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // funcion para que acepte numeros decimales
         fun validarDecimal(input: String) = input.matches(Regex("^\\d*\\.?\\d*\$"))
 
+        // creacion del input para ingresar notas y que solo acpte numeros
         OutlinedTextField(
             value = nota_1,
             onValueChange = { if (validarDecimal(it)) viewModel.nota_1.value = it },
@@ -66,6 +70,7 @@ fun IngenieriaTheme(viewModel: IngenieriaViewModel, onBackToLogin: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // boton para calcular notas con el metodo para calcular las notas por porcentaje
         Button(onClick = {
             if (nota_1.isNotBlank() && nota_2.isNotBlank() && nota_3.isNotBlank()) {
                 val n1 = nota_1.toDouble()
@@ -83,6 +88,7 @@ fun IngenieriaTheme(viewModel: IngenieriaViewModel, onBackToLogin: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // texto de la nota final
         notaFinal?.let {
             Text(
                 "Nota final: %.2f".format(it),

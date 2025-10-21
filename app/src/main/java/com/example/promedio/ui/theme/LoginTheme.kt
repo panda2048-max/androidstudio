@@ -9,6 +9,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 
+
+// creacion de la parte visual
 @Composable
 fun LoginScreen(
     onNavigateIngenieria: () -> Unit,
@@ -18,6 +20,7 @@ fun LoginScreen(
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var selectedCareer by remember { mutableStateOf("") }
 
+    // Column para que se cree esta apartado de manera de columnas hacia abajo
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -26,6 +29,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // testo del inicio
         Text(
             text = "Inicio de Sesión",
             style = MaterialTheme.typography.headlineLarge,

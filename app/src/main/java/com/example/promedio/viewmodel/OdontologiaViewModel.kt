@@ -7,6 +7,8 @@ import com.example.promedio.repository.OdontologiaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+// creacion de viewmodel el principal encargado de manejar los metodos
+// de leer,crear,actualizar y eliminar
 class OdontologiaViewModel(val repository: OdontologiaRepository) : ViewModel() {
 
     val nota_1 = MutableStateFlow("")

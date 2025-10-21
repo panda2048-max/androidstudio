@@ -7,6 +7,8 @@ import com.example.promedio.repository.LoginRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+// creacion de viewmodel el principal encargado de manejar los metodos
+// de leer,crear,actualizar y eliminar
 class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
 
     val nombre = MutableStateFlow("")
