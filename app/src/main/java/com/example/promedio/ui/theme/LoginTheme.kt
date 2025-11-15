@@ -9,7 +9,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 
-
 // creacion de la parte visual
 @Composable
 fun LoginScreen(
@@ -19,6 +18,7 @@ fun LoginScreen(
     var name by remember { mutableStateOf(TextFieldValue("")) }
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var selectedCareer by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf(false) }
 
     // Column para que se cree esta apartado de manera de columnas hacia abajo
     Column(
@@ -51,9 +51,18 @@ fun LoginScreen(
         // Campo de correo
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                emailError = !email.text.endsWith("@gmail.com")
+            },
             label = { Text("Correo electrónico") },
             singleLine = true,
+            isError = emailError,
+            supportingText = {
+                if (emailError) {
+                    Text("El correo debe terminar en @gmail.com")
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
@@ -93,6 +102,7 @@ fun LoginScreen(
             },
             enabled = name.text.isNotBlank() &&
                     email.text.isNotBlank() &&
+                    !emailError &&
                     selectedCareer.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(0.6f)
         ) {
