@@ -8,7 +8,7 @@ import androidx.room.*
 interface LoginDao{
 
     // Consulta todos los registros de la tabla 'logins'.
-    @Query("SELECT * FROM logins LIMIT 3")
+    @Query("SELECT * FROM logins")
     suspend fun  getAll(): List<Login>
 
     // Inserta un nuevo registro en la tabla 'logins'.
