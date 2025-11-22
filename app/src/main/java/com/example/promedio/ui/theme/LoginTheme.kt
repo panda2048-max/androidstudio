@@ -19,6 +19,8 @@ fun LoginScreen(
     viewModel: LoginViewModel
 ) {
     val logins by viewModel.logins.collectAsState()
+    val students by viewModel.usuariosRemotos.collectAsState() // API
+
     var mostrarDatos by remember { mutableStateOf(false) }
 
     var name by remember { mutableStateOf(TextFieldValue("")) }
@@ -88,11 +90,9 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                // Guardar usuario antes de navegar
                 val nuevoLogin = Login(
                     nombre = name.text,
-                    correo = email.text,
-
+                    correo = email.text
                 )
                 viewModel.agregarUsuario(nuevoLogin)
 
@@ -112,10 +112,14 @@ fun LoginScreen(
             Text("Continuar")
         }
 
-
-        // BOTÓN PARA VER REGISTROS
+        // BOTÓN PARA VER REGISTROS + API
         Button(
-            onClick = { mostrarDatos = !mostrarDatos },
+            onClick = {
+                mostrarDatos = !mostrarDatos
+                if (mostrarDatos) {
+                    viewModel.cargarUsuariosRemotos() // ← Cargar datos API
+                }
+            },
             modifier = Modifier.fillMaxWidth(0.7f)
         ) {
             Text(if (mostrarDatos) "Ocultar datos" else "Mostrar datos guardados")
@@ -123,6 +127,9 @@ fun LoginScreen(
 
         if (mostrarDatos) {
             Spacer(modifier = Modifier.height(16.dp))
+
+            // --- DATOS ROOM ---
+            Text("Datos guardados localmente (Room):", style = MaterialTheme.typography.titleMedium)
 
             if (logins.isEmpty()) {
                 Text("No hay registros guardados")
@@ -135,7 +142,26 @@ fun LoginScreen(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // --- DATOS API ---
+            Text("Datos desde la API:", style = MaterialTheme.typography.titleMedium)
+
+            if (students.isEmpty()) {
+                Text("Cargando datos de la API...")
+            } else {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    students.forEach { estudiante ->
+                        Text("ID: ${estudiante.id}")
+                        Text("Nombre: ${estudiante.name}")
+                        Text("Email: ${estudiante.email}")
+                        Divider()
+                    }
+                }
+            }
         }
     }
 }
+
 

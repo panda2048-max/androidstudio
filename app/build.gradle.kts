@@ -38,6 +38,19 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        packaging {
+            resources {
+                excludes += "META-INF/DEPENDENCIES"
+                excludes += "META-INF/LICENSE"
+                excludes += "META-INF/LICENSE.txt"
+                excludes += "META-INF/NOTICE"
+                excludes += "META-INF/*.kotlin_module"
+                excludes += "META-INF/INDEX.LIST"
+                excludes += "META-INF/io.netty.versions.properties"  // ⬅️ NUEVO
+            }
+        }
+    }
 }
 
 dependencies {
@@ -45,13 +58,21 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
     implementation("androidx.navigation:navigation-compose:2.8.0")
 
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:maps-compose:2.11.4")
 
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+
     implementation("androidx.room:room-runtime:2.7.0-alpha03")
     implementation("androidx.room:room-ktx:2.7.0-alpha03")
     implementation(libs.androidx.foundation)
+    implementation(libs.firebase.appdistribution.gradle)
     kapt("androidx.room:room-compiler:2.7.0-alpha03")
 
 

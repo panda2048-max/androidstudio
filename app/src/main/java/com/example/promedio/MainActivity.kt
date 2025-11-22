@@ -12,7 +12,7 @@ import com.example.promedio.model.AppDatabase
 import com.example.promedio.repository.*
 import com.example.promedio.ui.theme.*
 import com.example.promedio.viewmodel.*
-
+import com.example.promedio.data.api.repository.LoginRepositoryApi;
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +23,13 @@ class MainActivity : ComponentActivity() {
         val ingenieriaRepository = IngenieriaRepository(db.ingenieriaDao())
         val odontologiaRepository = OdontologiaRepository(db.odontologiaDao())
 
-        // ⬅️ NUEVO: Repositorio para la tabla Login
+        // Repositorio local (Room)
         val loginRepository = LoginRepository(db.loginDao())
 
-        // ViewModels con Factory
+        // Repositorio remoto (Retrofit)
+        val loginRepositoryApi = LoginRepositoryApi()
+
+        // ViewModels
         val ingenieriaViewModel = ViewModelProvider(
             this,
             IngenieriaViewModelFactory(ingenieriaRepository)
@@ -37,12 +40,10 @@ class MainActivity : ComponentActivity() {
             OdontologiaViewModelFactory(odontologiaRepository)
         )[OdontologiaViewModel::class.java]
 
-        // ⬅️ NUEVO: LoginViewModel creado correctamente
         val loginViewModel = ViewModelProvider(
             this,
-            LoginViewModelFactory(loginRepository)
+            LoginViewModelFactory(loginRepository, loginRepositoryApi)
         )[LoginViewModel::class.java]
-
 
         setContent {
             val navController = rememberNavController()
@@ -74,4 +75,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
