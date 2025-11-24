@@ -1,6 +1,8 @@
 package com.example.promedio.ui.theme
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,34 +16,47 @@ import com.example.promedio.viewmodel.LoginViewModel
 // creacion de la parte visual
 @Composable
 fun LoginScreen(
-    onNavigateIngenieria: () -> Unit,
-    onNavigateOdontologia: () -> Unit,
-    viewModel: LoginViewModel
+    onNavigateIngenieria: () -> Unit,     // Navegación hacia ingeniería
+    onNavigateOdontologia: () -> Unit,    // Navegación hacia odontología
+    viewModel: LoginViewModel             // ViewModel que maneja Room + API
 ) {
+    // Observa la lista de datos locales (Room)
     val logins by viewModel.logins.collectAsState()
-    val students by viewModel.usuariosRemotos.collectAsState() // API
 
+    // Observa los usuarios remotos (API)
+    val students by viewModel.usuariosRemotos.collectAsState()
+
+    // Controla si se muestran los datos
     var mostrarDatos by remember { mutableStateOf(false) }
 
+    // Inputs del usuario
     var name by remember { mutableStateOf(TextFieldValue("")) }
     var email by remember { mutableStateOf(TextFieldValue("")) }
+
+    // Checkbox para elegir carrera
     var selectedCareer by remember { mutableStateOf("") }
+
+    // Validación del correo
     var emailError by remember { mutableStateOf(false) }
 
+    // CONTENEDOR PRINCIPAL DE LA UI
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .wrapContentHeight()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()), // permite scroll en la pantalla
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // TÍTULO
         Text(
             text = "Inicio de Sesión",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
+        // CAMPO DE NOMBRE
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -52,11 +67,12 @@ fun LoginScreen(
                 .padding(bottom = 16.dp)
         )
 
+        // CAMPO DE CORREO CON VALIDACIÓN
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
-                emailError = !email.text.endsWith("@gmail.com")
+                emailError = !email.text.endsWith("@gmail.com") // Validación
             },
             label = { Text("Correo electrónico") },
             singleLine = true,
@@ -69,6 +85,7 @@ fun LoginScreen(
                 .padding(bottom = 24.dp)
         )
 
+        // CHECKBOX — Ingeniería
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = selectedCareer == "ingenieria",
@@ -77,6 +94,7 @@ fun LoginScreen(
             Text("Ingeniería en Informática")
         }
 
+        // CHECKBOX — Odontología
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 24.dp)
@@ -88,23 +106,28 @@ fun LoginScreen(
             Text("Técnico en Odontología")
         }
 
+        // BOTÓN PARA CONTINUAR (GUARDA EN ROOM + NAVEGA)
         Button(
             onClick = {
                 val nuevoLogin = Login(
                     nombre = name.text,
                     correo = email.text
                 )
+
+                // Guarda el usuario localmente en Room
                 viewModel.agregarUsuario(nuevoLogin)
 
+                // Navega según carrera
                 when (selectedCareer) {
                     "ingenieria" -> onNavigateIngenieria()
                     "odontologia" -> onNavigateOdontologia()
                 }
             },
-            enabled = name.text.isNotBlank() &&
-                    email.text.isNotBlank() &&
-                    !emailError &&
-                    selectedCareer.isNotEmpty(),
+            enabled =
+                name.text.isNotBlank() &&
+                        email.text.isNotBlank() &&
+                        !emailError &&
+                        selectedCareer.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .padding(bottom = 16.dp)
@@ -112,12 +135,13 @@ fun LoginScreen(
             Text("Continuar")
         }
 
-        // BOTÓN PARA VER REGISTROS + API
+        // BOTÓN PARA MOSTRAR/OCULTAR DATOS GUARDADOS Y API
         Button(
             onClick = {
                 mostrarDatos = !mostrarDatos
                 if (mostrarDatos) {
-                    viewModel.cargarUsuariosRemotos() // ← Cargar datos API
+                    // Cuando se muestra, carga los datos de la API
+                    viewModel.cargarUsuariosRemotos()
                 }
             },
             modifier = Modifier.fillMaxWidth(0.7f)
@@ -125,11 +149,18 @@ fun LoginScreen(
             Text(if (mostrarDatos) "Ocultar datos" else "Mostrar datos guardados")
         }
 
+        // SECCIÓN DE DATOS (SOLO SI mostrarDatos = true)
         if (mostrarDatos) {
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- DATOS ROOM ---
-            Text("Datos guardados localmente (Room):", style = MaterialTheme.typography.titleMedium)
+            // ------------------------------
+            //      DATOS LOCALES (ROOM)
+            // ------------------------------
+            Text(
+                "Datos guardados localmente (Room):",
+                style = MaterialTheme.typography.titleMedium
+            )
 
             if (logins.isEmpty()) {
                 Text("No hay registros guardados")
@@ -145,7 +176,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- DATOS API ---
+            // ------------------------------
+            //         DATOS API
+            // ------------------------------
             Text("Datos desde la API:", style = MaterialTheme.typography.titleMedium)
 
             if (students.isEmpty()) {
@@ -163,5 +196,6 @@ fun LoginScreen(
         }
     }
 }
+
 
 
